@@ -20,17 +20,7 @@ class Customer(models.Model):
 
     # Customer Model methods go here.
 
-class Movie(models.Model):
-    title = models.CharField(max_length=255)
-    overview = models.TextField()
-    release_date = models.DateTimeField()
-    inventory = models.PositiveSmallIntegerField()
-    num_available = models.PositiveSmallIntegerField(
-        validators=[validate_num_available])
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-# Does this have to appear before the class?
+# Validates that num_available is less than inventory in the Movie model
 def validate_num_available(num):
     if num > self.inventory:
         raise ValidationError("Number available cannot exceed inventory.")
@@ -39,3 +29,23 @@ def validate_num_available(num):
     #     from django.core.exceptions import ValidationError
     #     if self.num_available > self.inventory:
     #         raise ValidationError('Number available cannot exceed inventory.')
+
+class Movie(models.Model):
+    title = models.CharField(max_length=255)
+    overview = models.TextField()
+    release_date = models.DateTimeField()
+    inventory = models.PositiveSmallIntegerField()
+    num_available = models.PositiveSmallIntegerField(
+        validators=[validate_num_available])
+    rentals = models.ManyToManyField(Customer, through='Rental', through_fields=('movie', 'customer'))
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Rental(models.Model):
+    checkout_date = models.DateTimeField()
+    return_date = models.DateTimeField()
+    movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey('Customer', on_delete=models.DO_NOTHING)
+    checked_out = models.BooleanField()
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
