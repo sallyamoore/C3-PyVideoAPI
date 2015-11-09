@@ -37,37 +37,19 @@ class Command(BaseCommand):
                     num_available=item["inventory"],
                 )
 
-        with open("api/fixtures/rentals.json") as f:
-            reader = json.load(f)
-            for item in reader:
-                checked = True if item["checked_out"] == "true" else False
-                _, created = Rental.objects.get_or_create(
-                    checkout_date=parser.parse(item["checkout_date"]),
-                    return_date=parser.parse(item["return_date"]),
-                    movie_id=item["movie_id"],
-                    customer_id=item["customer_id"],
-                    checked_out=checked
-                )
+        # with open("api/fixtures/rentals.json") as f:
+        #     reader = json.load(f)
+        #     for item in reader:
+        #         checked = True if item["checked_out"] == "true" else False
+        #         _, created = Rental.objects.get_or_create(
+        #             checkout_date=parser.parse(item["checkout_date"]),
+        #             return_date=parser.parse(item["return_date"]),
+        #             movie_id=item["movie_id"],
+        #             customer_id=item["customer_id"],
+        #             checked_out=checked
+        #         )
 
-        for rental in Rental.objects.all():
-            if rental.checked_out == True:
-                movie = Movie.objects.get(id=rental.movie_id)
-                movie.num_available -= 1
-
-
-        # Rental.objects.all(
-        #     num_available=Case(
-        #         When()
-        #     ),
-        # )
-        # # WIP
-        # # movies = Movie.objects.all()
-        # # select all rentals where movie_id = this and checked_out = true
-        # # for movie in movies:
-        #
-        # # for each movie, subtract num checked out from num_available
-        # # select * from movie where movie.rentals eq true
-        #
-        # Rentals
-        # when Rental checked_out == true
-        #     that movie_id, find movie and subtract one from num_available
+        # for rental in Rental.objects.all():
+        #     if rental.checked_out == True:
+        #         movie = Movie.objects.get(id=rental.movie_id)
+        #         movie.num_available -= 1
