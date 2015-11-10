@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from api.models import Customer, Movie, Rental
 from api.serializers import ApiCustomerSerializer, ApiMovieSerializer, ApiRentalSerializer
 
+from django.core.paginator import Paginator
+
 @api_view(['GET'])
 def customer_list(request):
     """
@@ -14,6 +16,20 @@ def customer_list(request):
     """
     if request.method == 'GET':
         customers = Customer.objects.all()
+        serializer = ApiCustomerSerializer(customers, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def customers_by_name(request):
+    """
+    Retrieve a subset of customers sorted by name.
+    """
+    if request.method == 'GET':
+        customers = Customer.objects.all().order_by('name')
+        limit = request.query_params.get('limit')
+        offset = request.query_params.get('offset')
+        paginator = Paginator(customers, limit)
+        customers = paginator.page(offset)
         serializer = ApiCustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
