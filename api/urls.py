@@ -10,6 +10,7 @@ urlpatterns = patterns(
     url(r'^movies/$', 'movie_list', name='movie_list'),
     url(r'^movies/title/$', 'movies_by_title', name='movies_by_title'),
     url(r'^movies/release_date/$', 'movies_by_release_date', name='movies_by_release_date'),
+    url(r'^movies/(?P<title>.+)/$', 'movie', name='movie'),
 
     url(r'^rentals/$', 'rental_list', name='rental_list'),
 

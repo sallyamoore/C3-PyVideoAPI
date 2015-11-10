@@ -80,7 +80,7 @@ The API you build should have the following capabilities. The schema of your dat
   - it's synopsis
   - release date
   - and inventory total
-- Know if a movie has any inventory available to rent
+- Know if a movie has any inventory available to rent 
 
   _Time Permitting:_
   - See a list of customers that have _currently_ checked out any of the movie's inventory

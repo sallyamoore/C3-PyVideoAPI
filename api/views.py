@@ -100,6 +100,16 @@ def movies_by_release_date(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+def movie(request, title):
+    """
+    Retrieve a movie by entering its title.
+    """
+    if request.method == 'GET':
+        movies = Movie.objects.get(title=title)
+        serializer = ApiMovieSerializer(movies)
+        return Response(serializer.data)
+
+@api_view(['GET'])
 def rental_list(request):
     """
     List all rentals.
