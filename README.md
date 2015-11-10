@@ -43,12 +43,8 @@ The API you build should have the following capabilities. The schema of your dat
 ### Customers
 - Retrieve a list of all customers
 - Retrieve a subset of customers
-  - Given a sort column, return a specified number of customer records, offset by page number
+  - Given any sort column, return a specified number of customer records, offset by page number
     - E.g., /customer/name?limit=10&page=2 will return the second page of 10 records per page.
-  - Sort columns are
-    - `name`
-    - `registered_at`
-    - `postal_code`
 
   _Time Permitting:_
   - Given a customer's `id`...
@@ -60,11 +56,8 @@ The API you build should have the following capabilities. The schema of your dat
 ### Movies
 - Retrieve a list of all movies
 - Retrieve a subset of movies
-  - Given a sort column, return a specified number of movie records, offset by page number
+  - Given any sort column, return a specified number of movie records, offset by page number
     - E.g., /movies/title?limit=10&page=2 will return the second page of 10 records per page.   
-  - Sort columns are
-    - `title`
-    - `release_date`
 
   _Time Permitting:_
   - Given a movie's `title`...
@@ -80,7 +73,7 @@ The API you build should have the following capabilities. The schema of your dat
   - it's synopsis
   - release date
   - and inventory total
-- Know if a movie has any inventory available to rent 
+- Know if a movie has any inventory available to rent
 
   _Time Permitting:_
   - See a list of customers that have _currently_ checked out any of the movie's inventory
