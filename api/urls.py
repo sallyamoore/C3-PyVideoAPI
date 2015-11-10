@@ -3,10 +3,12 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     'api.views',
     url(r'^customers/$', 'customer_list', name='customer_list'),
-    url(r'^customers/name/$', 'customers_by_name', name='customers_by_name'),
-    url(r'^customers/registered_at/$', 'customers_by_registered_at', name='customers_by_registered_at'),
-    url(r'^customers/postal_code/$', 'customers_by_postal_code', name='customers_by_postal_code'),
+    url(r'^customers/(?P<column>.+)/$', 'customers_by_column', name='customers_by_column'),
+
     url(r'^movies/$', 'movie_list', name='movie_list'),
+    url(r'^movies/(?P<column>.+)/$', 'movies_by_column', name='movies_by_column'),
+    url(r'^movies/(?P<title>.+)/$', 'movie', name='movie'),
+
     url(r'^rentals/$', 'rental_list', name='rental_list'),
 
 )

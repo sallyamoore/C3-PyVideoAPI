@@ -20,44 +20,16 @@ def customer_list(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-def customers_by_name(request):
+def customers_by_column(request, column):
     """
     Retrieve a subset of customers sorted by name.
     """
     if request.method == 'GET':
-        customers = Customer.objects.all().order_by('name')
+        customers = Customer.objects.all().order_by(column)
         limit = request.query_params.get('limit')
-        offset = request.query_params.get('offset')
+        page = request.query_params.get('page')
         paginator = Paginator(customers, limit)
-        customers = paginator.page(offset)
-        serializer = ApiCustomerSerializer(customers, many=True)
-        return Response(serializer.data)
-
-@api_view(['GET'])
-def customers_by_registered_at(request):
-    """
-    Retrieve a subset of customers sorted by registered_at.
-    """
-    if request.method == 'GET':
-        customers = Customer.objects.all().order_by('registered_at')
-        limit = request.query_params.get('limit')
-        offset = request.query_params.get('offset')
-        paginator = Paginator(customers, limit)
-        customers = paginator.page(offset)
-        serializer = ApiCustomerSerializer(customers, many=True)
-        return Response(serializer.data)
-
-@api_view(['GET'])
-def customers_by_postal_code(request):
-    """
-    Retrieve a subset of customers sorted by postal_code.
-    """
-    if request.method == 'GET':
-        customers = Customer.objects.all().order_by('postal_code')
-        limit = request.query_params.get('limit')
-        offset = request.query_params.get('offset')
-        paginator = Paginator(customers, limit)
-        customers = paginator.page(offset)
+        customers = paginator.page(page)
         serializer = ApiCustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
@@ -69,6 +41,30 @@ def movie_list(request):
     if request.method == 'GET':
         movies = Movie.objects.all()
         serializer = ApiMovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def movies_by_column(request, column):
+    """
+    Retrieve a subset of movies sorted by column.
+    """
+    if request.method == 'GET':
+        movies = Movie.objects.all().order_by(column)
+        limit = request.query_params.get('limit')
+        page = request.query_params.get('page')
+        paginator = Paginator(movies, limit)
+        movies = paginator.page(page)
+        serializer = ApiMovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def movie(request, title):
+    """
+    Retrieve a movie by entering its title.
+    """
+    if request.method == 'GET':
+        movies = Movie.objects.get(title=title)
+        serializer = ApiMovieSerializer(movies)
         return Response(serializer.data)
 
 @api_view(['GET'])
