@@ -57,7 +57,7 @@ class Rental(models.Model):
         return self.movie.id
 
     def rental_customer_id(self):
-        return self.movie.id
+        return self.customer.id
 
 @receiver(pre_save, sender=Rental)
 def rental_decrements_movie_num_available(sender, **kwargs):
