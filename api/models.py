@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, ValidationError
 
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
+
 class Customer(models.Model):
     name = models.CharField(max_length=255)
     registered_at = models.DateTimeField()
@@ -49,3 +52,14 @@ class Rental(models.Model):
     checked_out = models.BooleanField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
+@receiver(pre_save, sender=Rental)
+def rental_decrements_movie_num_available(sender, **kwargs):
+    rental = kwargs.get("instance")
+    if rental.checked_out == True:
+        movie = Movie.objects.get(id=rental.movie.id)
+        if movie.num_available > 0:
+            movie.num_available -= 1
+            movie.save()
+        else:
+            raise ValidationError("Number available cannot exceed inventory.")
