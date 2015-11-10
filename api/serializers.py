@@ -1,16 +1,21 @@
 from rest_framework import serializers
 from api.models import Customer, Movie, Rental
 
-class ApiCustomerSerializer(serializers.Serializer):
-    pk = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(max_length=255)
-    registered_at = serializers.DateTimeField()
-    address = serializers.CharField(max_length=255)
-    city = serializers.CharField(max_length=255)
-    state = serializers.CharField(max_length=255)
-    postal_code = serializers.CharField(max_length=255)
-    phone = serializers.CharField(max_length=255)
-    account_credit = serializers.DecimalField(
-        max_digits=7,
-        decimal_places=2
-    )
+
+class ApiCustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('pk', 'name', 'registered_at', 'address', 'city', 'state',
+            'postal_code', 'phone', 'account_credit')
+
+class ApiMovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ('pk', 'title', 'overview', 'release_date', 'inventory',
+            'num_available')
+
+class ApiRentalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rental
+        fields = ('pk', 'checkout_date', 'return_date', 'movie',
+            'customer', 'checked_out')

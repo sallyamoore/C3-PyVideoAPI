@@ -73,6 +73,7 @@ The API you build should have the following capabilities. The schema of your dat
       - ordered by check out date
 
 ### Rental
+- Retrieve a list of all rentals (why not?)
 - Look a movie up by title to see
   - it's synopsis
   - release date
@@ -94,7 +95,7 @@ The API you build should have the following capabilities. The schema of your dat
 _Time Permitting_: Add views
 
 ### Interface
-- The main project is purely an API; all interactions should happen over HTTP requests. 
+- The main project is purely an API; all interactions should happen over HTTP requests.
 
 ### Testing
 - All endpoints must be tested.
