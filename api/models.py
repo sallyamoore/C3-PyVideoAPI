@@ -53,6 +53,12 @@ class Rental(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def rental_movie_id(self):
+        return self.movie.id
+
+    def rental_customer_id(self):
+        return self.movie.id
+
 @receiver(pre_save, sender=Rental)
 def rental_decrements_movie_num_available(sender, **kwargs):
     rental = kwargs.get("instance")
