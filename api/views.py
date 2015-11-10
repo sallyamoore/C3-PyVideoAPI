@@ -34,6 +34,20 @@ def customers_by_name(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+def customers_by_registered_at(request):
+    """
+    Retrieve a subset of customers sorted by registered_at.
+    """
+    if request.method == 'GET':
+        customers = Customer.objects.all().order_by('registered_at')
+        limit = request.query_params.get('limit')
+        offset = request.query_params.get('offset')
+        paginator = Paginator(customers, limit)
+        customers = paginator.page(offset)
+        serializer = ApiCustomerSerializer(customers, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
 def movie_list(request):
     """
     List all movies.
