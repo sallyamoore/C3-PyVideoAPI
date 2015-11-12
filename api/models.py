@@ -69,6 +69,5 @@ def validate_min_length(sender, **kwargs):
     min_len_vars = { customer.name: 1, customer.address: 1, customer.city: 1,
         customer.state: 1, customer.postal_code: 4, customer.phone: 7 }
     for key, value in min_len_vars.iteritems():
-        print key, value
         if len(key) < value:
             raise ValidationError("Attribute value is too short.")
