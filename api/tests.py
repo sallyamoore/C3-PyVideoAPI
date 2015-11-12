@@ -72,17 +72,40 @@ class CustomerTestCase(TestCase):
 class MovieTestCase(TestCase):
     def setUp(self):
         Movie.objects.create(
-            title=,
-            overview=,
-            release_date=,
-            inventory=,
-            num_available=
-            rentals=
+            title="Jaws",
+            overview="Sharks are super hungry",
+            release_date=datetime.now(),
+            inventory=6,
+            num_available=6
         )
 
     def test_valid_movie(self):
         """ Adds a movie to the database when valid params given """
         movie = Movie.objects.get(id=1)
-        self.assertEqual("", movie.title)
-        self.assertEqual(, movie.inventory)
-        self.assertEqual(Decimal(), movie.num_available)
+        self.assertEqual("Jaws", movie.title)
+        self.assertEqual(6, movie.inventory)
+        self.assertEqual(6, movie.num_available)
+
+    def test_num_available_less_than_inventory(self):
+        """ Does not allow a movie's num_available to exceed inventory. """
+        movie = Movie.objects.get(id=1)
+        movie.num_available = 9
+        self.assertRaises(ValidationError, movie.save)
+        db_movie = Movie.objects.get(id=1)
+        self.assertEqual(db_movie.num_available, 6)
+
+    def test_num_available_zero_or_greater(self):
+        """ A movie's num_available cannot be negative """
+        movie = Movie.objects.get(id=1)
+        movie.num_available = -2
+        self.assertRaises(ValidationError, movie.full_clean)
+        db_movie = Movie.objects.get(id=1)
+        self.assertEqual(db_movie.num_available, 6)
+
+    def test_inventory_zero_or_greater(self):
+        """ A movie's inventory cannot be negative """
+        movie = Movie.objects.get(id=1)
+        movie.inventory = -2
+        self.assertRaises(ValidationError, movie.full_clean)
+        db_movie = Movie.objects.get(id=1)
+        self.assertEqual(db_movie.inventory, 6)

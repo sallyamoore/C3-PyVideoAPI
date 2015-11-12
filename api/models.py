@@ -25,8 +25,8 @@ class Movie(models.Model):
     title = models.CharField(max_length=255)
     overview = models.TextField()
     release_date = models.DateTimeField()
-    inventory = models.PositiveSmallIntegerField()
-    num_available = models.PositiveSmallIntegerField()
+    inventory = models.PositiveSmallIntegerField(default=0, validators=[MinValueValidator(0)])
+    num_available = models.PositiveSmallIntegerField(default=0, validators=[MinValueValidator(0)])
     rentals = models.ManyToManyField(Customer, through='Rental', through_fields=('movie', 'customer'))
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -53,6 +53,7 @@ def rental_decrements_movie_num_available(sender, **kwargs):
         movie = Movie.objects.get(id=rental.movie.id)
         if movie.num_available > 0:
             movie.num_available -= 1
+            movie.full_clean()
             movie.save()
         else:
             raise ValidationError("Number available cannot exceed inventory.")
