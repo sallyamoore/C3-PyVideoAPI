@@ -1,6 +1,6 @@
 from django.test import TestCase
 from api.models import Customer, Movie, Rental
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from django.core.validators import MinValueValidator, ValidationError
 
@@ -109,3 +109,13 @@ class MovieTestCase(TestCase):
         self.assertRaises(ValidationError, movie.full_clean)
         db_movie = Movie.objects.get(id=1)
         self.assertEqual(db_movie.inventory, 6)
+
+    # def test_movie_rental(self):
+    #     """ A movie can have an associated rental. """
+    #     movie = Movie.objects.get(id=1)
+    #     rental = Rental.objects.create(
+    #         checkout_date=datetime.now(),
+    #         return_date=datetime.now() + timedelta(7,0)
+    #     )
+    #     movie.rentals.append(rental)
+    #     print movie.rentals
