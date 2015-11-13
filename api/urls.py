@@ -7,7 +7,7 @@ urlpatterns = patterns(
 
     url(r'^movies/$', 'movie_list', name='movie_list'),
     url(r'^movies/(?P<column>.+)/$', 'movies_by_column', name='movies_by_column'),
-    url(r'^movies/(?P<title>.+)/$', 'movie', name='movie'),
+    url(r'^movie/(?P<title>.+)/$', 'movie', name='movie'),
 
     url(r'^rentals/$', 'rental_list', name='rental_list'),
 
