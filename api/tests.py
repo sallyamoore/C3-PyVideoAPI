@@ -218,7 +218,7 @@ class GetAllCustomers(TestCase):
         self.assertEqual(response.data[0]['name'], "Jean Luc Picard")
         self.assertEqual(response.data[1]['name'], "Trash Panda")
 
-class GetAllMovies(TestCase):
+class MovieEndpoints(TestCase):
     def setUp(self):
         Movie.objects.create(
             title="Jaws",
@@ -244,6 +244,14 @@ class GetAllMovies(TestCase):
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(response.data[0]['title'], "Jaws")
         self.assertEqual(response.data[1]['title'], "The Shining")
+
+    def test_get_movie_by_title(self):
+        """ GET /movie/(?P<title>.+) retrieves a single movie by title """
+        response = self.client.get('/movie/Jaws/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.data['title'], 'Jaws')
+        self.assertEqual(response.data['inventory'], 6)
 
 class GetAllRentals(TestCase):
     def setUp(self):
