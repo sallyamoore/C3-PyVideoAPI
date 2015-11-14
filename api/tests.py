@@ -191,21 +191,21 @@ class RentalTestCase(TestCase):
         self.assertEqual(db_movie.num_available, 0)
         self.assertRaises(ValidationError, new_rental.save)
 
-class GetAllCustomers(TestCase):
+class CustomerEndpoints(TestCase):
     def setUp(self):
-        Customer.objects.create(
-            name="Jean Luc Picard",
-            registered_at=datetime.now(),
-            address="123 Space", city="Space", state="MW",
-            postal_code="its f-ing space dude", phone="555-5555",
-            account_credit=56.34
-        )
         Customer.objects.create(
             name="Trash Panda",
             registered_at=datetime.now(),
             address="123 Your Trash Can", city="Backyard", state="WA",
             postal_code="its a trashcan dude", phone="ima racoon",
             account_credit=1800.00
+        )
+        Customer.objects.create(
+            name="Jean Luc Picard",
+            registered_at=datetime.now(),
+            address="123 Space", city="Space", state="MW",
+            postal_code="its f-ing space dude", phone="555-5555",
+            account_credit=56.34
         )
         self.client = Client()
 
@@ -215,8 +215,18 @@ class GetAllCustomers(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertEqual(response.data[0]['name'], "Jean Luc Picard")
-        self.assertEqual(response.data[1]['name'], "Trash Panda")
+        self.assertEqual(response.data[0]['name'], "Trash Panda")
+        self.assertEqual(response.data[1]['name'], "Jean Luc Picard")
+
+    def test_get_customers_sorted_by_name(self):
+        # NOTE: Add more tests by column. Maybe put cols in list and loop.
+        """ Given sort column of name, limit of 1, and page of 2, returns
+        matching customer, i.e.,  """
+        response = self.client.get('/customers/name/?limit=1&page=2')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.data[0]['name'], "Trash Panda")
 
 class MovieEndpoints(TestCase):
     def setUp(self):
@@ -253,7 +263,17 @@ class MovieEndpoints(TestCase):
         self.assertEqual(response.data['title'], 'Jaws')
         self.assertEqual(response.data['inventory'], 6)
 
-class GetAllRentals(TestCase):
+    def test_get_movies_sorted_by_overview(self):
+        # NOTE: Add more tests by column. Maybe put cols in list and loop.
+        """ Given sort column of overview, limit of 1, and page of 2, returns
+        matching movie, i.e., Jaws """
+        response = self.client.get('/movies/overview/?limit=1&page=2')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.data[0]['title'], "Jaws")
+
+class RentalEndpoints(TestCase):
     def setUp(self):
         movie = Movie.objects.create(
             title="Jaws",
