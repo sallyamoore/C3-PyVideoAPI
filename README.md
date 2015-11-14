@@ -58,6 +58,11 @@ The API you build should have the following capabilities. The schema of your dat
 - Retrieve a subset of movies
   - Given any sort column, return a specified number of movie records, offset by page number
     - E.g., /movies/title?limit=10&page=2 will return the second page of 10 records per page.   
+- Look a movie up by title to see
+  - it's synopsis
+  - release date
+  - and inventory total
+- Know if a movie has any inventory available to rent
 
   _Time Permitting:_
   - Given a movie's `title`...
@@ -69,11 +74,6 @@ The API you build should have the following capabilities. The schema of your dat
 
 ### Rental
 - Retrieve a list of all rentals (why not?)
-- Look a movie up by title to see
-  - it's synopsis
-  - release date
-  - and inventory total
-- Know if a movie has any inventory available to rent
 
   _Time Permitting:_
   - See a list of customers that have _currently_ checked out any of the movie's inventory
