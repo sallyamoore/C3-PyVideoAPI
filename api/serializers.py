@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from api.models import Customer, Movie, Rental
 
-
 class ApiCustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer

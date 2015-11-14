@@ -36,20 +36,3 @@ class Command(BaseCommand):
                     inventory=item["inventory"],
                     num_available=item["inventory"],
                 )
-
-        # with open("api/fixtures/rentals.json") as f:
-        #     reader = json.load(f)
-        #     for item in reader:
-        #         checked = True if item["checked_out"] == "true" else False
-        #         _, created = Rental.objects.get_or_create(
-        #             checkout_date=parser.parse(item["checkout_date"]),
-        #             return_date=parser.parse(item["return_date"]),
-        #             movie_id=item["movie_id"],
-        #             customer_id=item["customer_id"],
-        #             checked_out=checked
-        #         )
-
-        # for rental in Rental.objects.all():
-        #     if rental.checked_out == True:
-        #         movie = Movie.objects.get(id=rental.movie_id)
-        #         movie.num_available -= 1

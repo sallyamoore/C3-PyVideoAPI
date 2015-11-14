@@ -46,6 +46,11 @@ class Rental(models.Model):
     def rental_customer_id(self):
         return self.customer.id
 
+# Receivers below listen for pre_save events and execute additional model validations.
+# Model validations through field characteristics (e.g., PositiveSmallIntegerField
+# should not allow negatives) above are not activated at database level,
+# apparently due to a problem with how Django works with SQLite3.
+# These receiver decorators ensure that model validations take place. 
 @receiver(pre_save, sender=Rental)
 def rental_decrements_movie_num_available(sender, **kwargs):
     rental = kwargs.get("instance")
