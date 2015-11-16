@@ -218,15 +218,25 @@ class CustomerEndpoints(TestCase):
         self.assertEqual(response.data[0]['name'], "Trash Panda")
         self.assertEqual(response.data[1]['name'], "Jean Luc Picard")
 
-    def test_get_customers_sorted_by_name(self):
-        # NOTE: Add more tests by column. Maybe put cols in list and loop.
-        """ Given sort column of name, limit of 1, and page of 2, returns
-        matching customer, i.e.,  """
-        response = self.client.get('/customers/name/?limit=1&page=2')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertEqual(response.data[0]['name'], "Trash Panda")
+    def test_get_customers_sorted_by_column(self):
+        """ Given sort column of name, limit of 2, and page of 1, returns
+        matching customer, i.e., Aaron Aaronson """
+        Customer.objects.create(
+            name="Aaron Aaronson",
+            registered_at=datetime.now() - timedelta(1,0),
+            address="100 A St", city="Atlanta", state="AZ",
+            postal_code="00001", phone="111-1111",
+            account_credit=1.00
+        )
+        columns = [ 'name', 'registered_at', 'address', 'city', 'state',
+        'postal_code', 'account_credit' ]
+
+        for col in columns:
+            response = self.client.get('/customers/' + col + '/?limit=2&page=1')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response.data), 2)
+            self.assertEqual(response['Content-Type'], 'application/json')
+            self.assertEqual(response.data[0]['name'], "Aaron Aaronson")
 
 class MovieEndpoints(TestCase):
     def setUp(self):
@@ -263,15 +273,25 @@ class MovieEndpoints(TestCase):
         self.assertEqual(response.data['title'], 'Jaws')
         self.assertEqual(response.data['inventory'], 6)
 
-    def test_get_movies_sorted_by_overview(self):
-        # NOTE: Add more tests by column. Maybe put cols in list and loop.
-        """ Given sort column of overview, limit of 1, and page of 2, returns
-        matching movie, i.e., Jaws """
-        response = self.client.get('/movies/overview/?limit=1&page=2')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertEqual(response.data[0]['title'], "Jaws")
+    def test_get_movies_sorted_by_column(self):
+        """ Given sort column of overview, limit of 2, and page of 1, returns
+        matching movie, i.e., Aliens """
+        Movie.objects.create(
+            title="Aliens",
+            overview="AAAALLLIENS!!!",
+            release_date=datetime.now() - timedelta(1,0),
+            inventory=1,
+            num_available=1
+        )
+        columns = [ 'title', 'overview', 'release_date', 'inventory',
+        'num_available' ]
+
+        for col in columns:
+            response = self.client.get('/movies/' + col + '/?limit=2&page=1')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response.data), 2)
+            self.assertEqual(response['Content-Type'], 'application/json')
+            self.assertEqual(response.data[0]['title'], "Aliens")
 
 class RentalEndpoints(TestCase):
     def setUp(self):
