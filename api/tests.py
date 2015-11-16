@@ -6,7 +6,6 @@ from django.core.validators import MinValueValidator, ValidationError
 
 # to run tests with coverage: coverage run --source='.' --omit='api/migrations/*,PyVideoAPI/*,api/management/*' manage.py test api
 # then to get the coverage report: coverage report -m
-
 class CustomerTestCase(TestCase):
     def setUp(self):
         Customer.objects.create(
@@ -156,6 +155,7 @@ class RentalTestCase(TestCase):
             movie=movie,
             customer=customer
         )
+
     def test_valid_rental(self):
         """ Adds a rental to the database when valid params given """
         rental = Rental.objects.get(id=1)
@@ -190,6 +190,16 @@ class RentalTestCase(TestCase):
         db_movie = Movie.objects.get(id=1)
         self.assertEqual(db_movie.num_available, 0)
         self.assertRaises(ValidationError, new_rental.save)
+
+    def test_rental_movie_id(self):
+        rental = Rental.objects.get(id=1)
+        movie = Movie.objects.get(id=1)
+        self.assertEqual(rental.rental_movie_id(), movie.id)
+
+    def test_rental_customer_id(self):
+        rental = Rental.objects.get(id=1)
+        customer = Customer.objects.get(id=1)
+        self.assertEqual(rental.rental_customer_id(), customer.id)
 
 class CustomerEndpoints(TestCase):
     def setUp(self):
