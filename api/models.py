@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, ValidationError
 
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
+from datetime import datetime, timedelta
 
 class Customer(models.Model):
     name = models.CharField(max_length=255)
@@ -32,11 +33,11 @@ class Movie(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class Rental(models.Model):
-    checkout_date = models.DateTimeField()
-    return_date = models.DateTimeField()
+    checkout_date = models.DateTimeField(default=timezone.now)
+    return_date = models.DateTimeField(default=timezone.now() + timedelta(7,0))
     movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING)
     customer = models.ForeignKey('Customer', on_delete=models.DO_NOTHING)
-    checked_out = models.BooleanField()
+    checked_out = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -50,7 +51,7 @@ class Rental(models.Model):
 # Model validations through field characteristics (e.g., PositiveSmallIntegerField
 # should not allow negatives) above are not activated at database level,
 # apparently due to a problem with how Django works with SQLite3.
-# These receiver decorators ensure that model validations take place. 
+# These receiver decorators ensure that model validations take place.
 @receiver(pre_save, sender=Rental)
 def rental_decrements_movie_num_available(sender, **kwargs):
     rental = kwargs.get("instance")

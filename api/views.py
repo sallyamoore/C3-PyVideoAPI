@@ -76,3 +76,14 @@ def rental_list(request):
         rentals = Rental.objects.all()
         serializer = ApiRentalSerializer(rentals, many=True)
         return Response(serializer.data)
+
+@api_view(['POST'])
+def post_checkout(request):
+    serializer = ApiRentalSerializer(data=request.body)
+    print request.body
+    print serializer
+    if serializer.is_valid():
+        # get movie.pk? or object? from title
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

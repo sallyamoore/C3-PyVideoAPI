@@ -10,5 +10,6 @@ urlpatterns = patterns(
     url(r'^movie/(?P<title>.+)/$', 'movie', name='movie'),
 
     url(r'^rentals/$', 'rental_list', name='rental_list'),
+    url(r'^rentals/checkout/$', 'post_checkout', name='post_checkout')
 
 )
