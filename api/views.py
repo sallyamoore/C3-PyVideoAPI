@@ -79,12 +79,14 @@ def rental_list(request):
 
 @api_view(['POST'])
 def post_checkout(request):
-    movie = Movie.objects.get(title=request.data["movie"])
-    customer_pk = request.data["customer"]
-    rental_dict = { 'movie': movie.pk, 'customer': customer_pk }
-    serializer = ApiRentalSerializer(data=rental_dict)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if Movie.objects.filter(title=request.data["movie"]).exists():
+        movie = Movie.objects.get(title=request.data["movie"])
+        customer_pk = request.data["customer"]
+        rental_dict = { 'movie': movie.pk, 'customer': customer_pk }
+        serializer = ApiRentalSerializer(data=rental_dict)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response("Bad Request", status=status.HTTP_400_BAD_REQUEST)
