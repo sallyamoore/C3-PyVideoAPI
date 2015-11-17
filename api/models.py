@@ -53,14 +53,17 @@ class Rental(models.Model):
 # apparently due to a problem with how Django works with SQLite3.
 # These receiver decorators ensure that model validations take place.
 @receiver(pre_save, sender=Rental)
-def rental_decrements_movie_num_available(sender, **kwargs):
+def rental_decrements_movie_num_available_customer_account_credit(sender, **kwargs):
     rental = kwargs.get("instance")
     if rental.checked_out == True:
-        movie = Movie.objects.get(id=rental.movie.id)
+        movie = Movie.objects.get(id=rental.movie.pk)
+        customer = Customer.objects.get(id=rental.customer.pk)
         if movie.num_available > 0:
             movie.num_available -= 1
             movie.full_clean()
             movie.save()
+            customer.account_credit -= 1
+            customer.save()
         else:
             raise ValidationError("Number available cannot exceed inventory.")
 

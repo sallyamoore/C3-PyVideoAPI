@@ -18,17 +18,3 @@ class ApiRentalSerializer(serializers.ModelSerializer):
         model = Rental
         fields = ('pk', 'checkout_date', 'return_date', 'movie',
             'customer', 'checked_out')
-
-    # def create(self, validated_data):
-    #     movie_data = validated_data.pop('movie')
-    #     movie = Movie.objects.get(title=movie_data)
-    #     customer_data = validated_data.pop('customer')
-    #     customer = Customer.objects.get(pk=customer_data)
-    #
-    #     print "MOVIE: " + movie_data
-    #     print "CUST: " + customer_data
-    #
-    #     rental = Rental.objects.create(movie=movie_data, customer=customer_data)
-    #
-    #     rental.save()
-    #     return rental

@@ -79,13 +79,12 @@ def rental_list(request):
 
 @api_view(['POST'])
 def post_checkout(request):
-    serializer = ApiRentalSerializer(data=request.data)
+    movie = Movie.objects.get(title=request.data["movie"])
+    customer_pk = request.data["customer"]
+    rental_dict = { 'movie': movie.pk, 'customer': customer_pk }
+    serializer = ApiRentalSerializer(data=rental_dict)
 
-    print request.data
-    print request.query_params
-    print serializer
     if serializer.is_valid():
-        # get movie.pk? or object? from title
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
