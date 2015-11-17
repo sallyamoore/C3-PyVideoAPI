@@ -79,8 +79,10 @@ def rental_list(request):
 
 @api_view(['POST'])
 def post_checkout(request):
-    serializer = ApiRentalSerializer(data=request.body)
-    print request.body
+    serializer = ApiRentalSerializer(data=request.data)
+
+    print request.data
+    print request.query_params
     print serializer
     if serializer.is_valid():
         # get movie.pk? or object? from title
