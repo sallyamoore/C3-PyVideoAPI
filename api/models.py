@@ -55,9 +55,21 @@ class Rental(models.Model):
 @receiver(pre_save, sender=Rental)
 def rental_decrements_movie_num_available_customer_account_credit(sender, **kwargs):
     rental = kwargs.get("instance")
+    # print rental.pk
+    # print rental.checked_out
+    # if rental.pk and rental.checked_out == True: # updating
+    #     rental.checked_out = False
+    #     rental.save()
+    #     movie = Movie.objects.get(id=rental.movie.pk)
+    #     movie.num_available += 1
+    #     movie.full_clean()
+    #     movie.save()
+
     if rental.checked_out == True:
+    # else:
         movie = Movie.objects.get(id=rental.movie.pk)
         customer = Customer.objects.get(id=rental.customer.pk)
+        # import pdb; pdb.set_trace()
         if movie.num_available > 0:
             movie.num_available -= 1
             movie.full_clean()
@@ -66,6 +78,13 @@ def rental_decrements_movie_num_available_customer_account_credit(sender, **kwar
             customer.save()
         else:
             raise ValidationError("Number available cannot exceed inventory.")
+
+    elif rental.checked_out == False:
+        movie = Movie.objects.get(id=rental.movie.pk)
+        movie.num_available += 1
+        movie.full_clean()
+        movie.save()
+
 
 @receiver(pre_save, sender=Movie)
 def validate_num_available(sender, **kwargs):

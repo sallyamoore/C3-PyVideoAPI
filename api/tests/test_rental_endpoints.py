@@ -76,3 +76,16 @@ class RentalEndpoints(TestCase):
         self.assertEqual(rental.checked_out, True)
         self.assertEqual(movie.num_available, 4)
         self.assertEqual(customer.account_credit, 1798.00)
+
+    def test_valid_checkin(self):
+        """ Checks in a movie """
+        response = self.client.put('/rentals/checkin/', {'movie': 'Jaws', 'customer': '1'})
+        rental = Rental.objects.last()
+        movie = Movie.objects.get(id=1)
+        customer = Customer.objects.get(id=1)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(len(Rental.objects.all()), 1)
+        self.assertEqual(rental.checked_out, False)
+        self.assertEqual(movie.num_available, 6)
+        self.assertEqual(customer.account_credit, 1799.00)
