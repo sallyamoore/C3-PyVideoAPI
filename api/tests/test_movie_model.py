@@ -15,38 +15,38 @@ class MovieTestCase(TestCase):
 
     def test_valid_movie(self):
         """ Adds a movie to the database when valid params given """
-        movie = Movie.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
         self.assertEqual("Jaws", movie.title)
         self.assertEqual(movie.inventory, 6)
         self.assertEqual(movie.num_available, 6)
 
     def test_num_available_less_than_inventory(self):
         """ Does not allow a movie's num_available to exceed inventory. """
-        movie = Movie.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
         movie.num_available = 9
         self.assertRaises(ValidationError, movie.save)
-        db_movie = Movie.objects.get(id=1)
+        db_movie = Movie.objects.get(pk=1)
         self.assertEqual(db_movie.num_available, 6)
 
     def test_num_available_zero_or_greater(self):
         """ A movie's num_available cannot be negative """
-        movie = Movie.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
         movie.num_available = -2
         self.assertRaises(ValidationError, movie.full_clean)
-        db_movie = Movie.objects.get(id=1)
+        db_movie = Movie.objects.get(pk=1)
         self.assertEqual(db_movie.num_available, 6)
 
     def test_inventory_zero_or_greater(self):
         """ A movie's inventory cannot be negative """
-        movie = Movie.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
         movie.inventory = -2
         self.assertRaises(ValidationError, movie.full_clean)
-        db_movie = Movie.objects.get(id=1)
+        db_movie = Movie.objects.get(pk=1)
         self.assertEqual(db_movie.inventory, 6)
 
     def test_movie_rental(self):
         """ A movie can have an associated rental. """
-        movie = Movie.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
         customer = Customer.objects.create(
             name="Jean Luc Picard",
             registered_at=datetime.now(),

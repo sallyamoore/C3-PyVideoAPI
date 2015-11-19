@@ -41,11 +41,11 @@ class Rental(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def rental_movie_id(self):
-        return self.movie.id
+    def rental_movie_pk(self):
+        return self.movie.pk
 
-    def rental_customer_id(self):
-        return self.customer.id
+    def rental_customer_pk(self):
+        return self.customer.pk
 
     def checkout(self):
         movie = self.movie

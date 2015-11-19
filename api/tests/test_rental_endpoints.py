@@ -34,8 +34,8 @@ class RentalEndpoints(TestCase):
     def test_get_all_rentals(self):
         """ Returns a list of all rentals in JSON """
         response = self.client.get('/rentals/')
-        movie = Movie.objects.get(id=1)
-        customer = Customer.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
+        customer = Customer.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -45,8 +45,8 @@ class RentalEndpoints(TestCase):
     def test_invalid_customer_checkout(self):
         """ Does not check out a movie, does not decrement movie num_available or customer account_credit """
         response = self.client.post('/rentals/checkout/', {'movie': 'Jaws', 'customer': '100'})
-        movie = Movie.objects.get(id=1)
-        customer = Customer.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
+        customer = Customer.objects.get(pk=1)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(len(Rental.objects.all()), 1)
@@ -56,8 +56,8 @@ class RentalEndpoints(TestCase):
     def test_invalid_movie_checkout(self):
         """ Does not check out a movie, does not decrement movie num_available or customer account_credit """
         response = self.client.post('/rentals/checkout/', {'movie': 'The Shining', 'customer': '1'})
-        customer = Customer.objects.get(id=1)
-        movie = Movie.objects.get(id=1)
+        customer = Customer.objects.get(pk=1)
+        movie = Movie.objects.get(pk=1)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(len(Rental.objects.all()), 1)
@@ -69,8 +69,8 @@ class RentalEndpoints(TestCase):
         """ Checks out a movie. Decrements the movie num_available and the customer account_credit """
         response = self.client.post('/rentals/checkout/', {'movie': 'Jaws', 'customer': '1'})
         rental = Rental.objects.last()
-        movie = Movie.objects.get(id=1)
-        customer = Customer.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
+        customer = Customer.objects.get(pk=1)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(len(Rental.objects.all()), 2)
@@ -83,8 +83,8 @@ class RentalEndpoints(TestCase):
         self.client.post('/rentals/checkout/', {'movie': 'Jaws', 'customer': '1'})
         response = self.client.put('/rentals/checkin/Jaws/1/')
         rental = Rental.objects.first()
-        movie = Movie.objects.get(id=1)
-        customer = Customer.objects.get(id=1)
+        movie = Movie.objects.get(pk=1)
+        customer = Customer.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(len(Rental.objects.all()), 2)

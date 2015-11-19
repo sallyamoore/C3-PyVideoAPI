@@ -9,7 +9,7 @@ class MovieAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'release_date', 'inventory', 'num_available')
 
 class RentalAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'checkout_date', 'return_date', 'rental_movie_id', 'rental_customer_id', 'checked_out')
+    list_display = ('pk', 'checkout_date', 'return_date', 'rental_movie_pk', 'rental_customer_pk', 'checked_out')
 
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Movie, MovieAdmin)
