@@ -2,7 +2,8 @@ from django.test import TestCase, Client
 from api.models import Customer, Movie, Rental
 from datetime import datetime, timedelta
 
-# to run tests with coverage: coverage run --source='.' --omit='api/migrations/*,PyVideoAPI/*,api/management/*' manage.py test api
+# to run tests with coverage:
+# coverage run --source='.' --omit='api/migrations/*,PyVideoAPI/*,api/management/*' manage.py test api
 # then to get the coverage report: coverage report -m
 
 class RentalEndpoints(TestCase):
@@ -12,14 +13,14 @@ class RentalEndpoints(TestCase):
             overview="Sharks are super hungry",
             release_date=datetime.now(),
             inventory=6,
-            num_available=6
+            num_available=5
         )
         customer = Customer.objects.create(
             name="Trash Panda",
             registered_at=datetime.now(),
             address="123 Your Trash Can", city="Backyard", state="WA",
             postal_code="its a trashcan dude", phone="ima racoon",
-            account_credit=1800.00
+            account_credit=1799.00
         )
         Rental.objects.create(
             checkout_date=datetime.now(),
@@ -78,14 +79,15 @@ class RentalEndpoints(TestCase):
         self.assertEqual(customer.account_credit, 1798.00)
 
     def test_valid_checkin(self):
-        """ Checks in a movie """
-        response = self.client.put('/rentals/checkin/', {'movie': 'Jaws', 'customer': '1'})
-        rental = Rental.objects.last()
+        """ Checks in a movie. Increments movie num_available """
+        self.client.post('/rentals/checkout/', {'movie': 'Jaws', 'customer': '1'})
+        response = self.client.put('/rentals/checkin/Jaws/1/')
+        rental = Rental.objects.first()
         movie = Movie.objects.get(id=1)
         customer = Customer.objects.get(id=1)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertEqual(len(Rental.objects.all()), 1)
+        self.assertEqual(len(Rental.objects.all()), 2)
         self.assertEqual(rental.checked_out, False)
-        self.assertEqual(movie.num_available, 6)
-        self.assertEqual(customer.account_credit, 1799.00)
+        self.assertEqual(movie.num_available, 5)
+        self.assertEqual(customer.account_credit, 1798.00)

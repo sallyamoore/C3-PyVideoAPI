@@ -10,6 +10,6 @@ urlpatterns = patterns(
     url(r'^movie/(?P<title>.+)/$', 'movie', name='movie'),
 
     url(r'^rentals/$', 'rental_list', name='rental_list'),
-    url(r'^rentals/checkout/$', 'post_checkout', name='post_checkout'),
-    url(r'^rentals/checkin/$', 'put_checkin', name='put_checkin')
+    url(r'^rentals/checkout/$', 'checkout_checkin', name='checkout_checkin'),
+    url(r'^rentals/checkin/(?P<movie_title>.+)/(?P<customer_pk>.+)/$', 'checkout_checkin', name='checkout_checkin')
 )

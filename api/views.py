@@ -77,35 +77,37 @@ def rental_list(request):
         serializer = ApiRentalSerializer(rentals, many=True)
         return Response(serializer.data)
 
-@api_view(['POST'])
-def post_checkout(request):
-    if Movie.objects.filter(title=request.data["movie"]).exists():
-        movie = Movie.objects.get(title=request.data["movie"])
-        customer_pk = request.data["customer"]
-        rental_dict = { 'movie': movie.pk, 'customer': customer_pk }
-        serializer = ApiRentalSerializer(data=rental_dict)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
+@api_view(['POST', 'PUT'])
+def checkout_checkin(request, **kwargs):
+    """ Check out and check in rentals """
+    if request.method == 'POST':
+        if Movie.objects.filter(title=request.data["movie"]).exists() and Customer.objects.filter(pk=request.data["customer"]).exists():
+            movie = Movie.objects.get(title=request.data["movie"])
+            customer = Customer.objects.get(pk=request.data["customer"])
+
+            rental_dict = { 'movie': movie.pk, 'customer': customer.pk }
+
+            rental = Rental( movie=movie, customer=customer )
+            rental.checkout()
+
+            serializer = ApiRentalSerializer(data=rental_dict)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("Bad Request", status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['PUT'])
-def put_checkin(request):
-    print Movie.objects.filter(title=request.data["movie"]).exists()
-    if Movie.objects.filter(title=request.data["movie"]).exists():
-        movie = Movie.objects.get(title=request.data["movie"])
-        customer_pk = request.data["customer"]
-        rental = Rental.objects.filter(movie=movie.pk, customer=customer_pk).first() # checks in the oldest rental if multiple copies of the same movie are checked out by the same customer
-        # rental.checked_out = False
-        rental.pk
-        import pdb; pdb.set_trace()
-        rental_dict = { 'pk': rental.pk, 'movie': movie.pk, 'customer': customer_pk, 'checked_out': False }
-        serializer = ApiRentalSerializer(data=rental_dict, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
+    elif request.method == 'PUT':
+        if Movie.objects.filter(title=kwargs["movie_title"]).exists() and Customer.objects.filter(pk=kwargs["customer_pk"]).exists():
+            movie = Movie.objects.get(title=kwargs["movie_title"])
+            customer_pk = kwargs["customer_pk"]
+
+            # checks in the oldest rental if multiple copies of the same movie are checked out by the same customer
+            rental = Rental.objects.filter(movie=movie.pk, customer=customer_pk).first()
+            rental_dict = rental.checkin()
+
+            serializer = ApiRentalSerializer(data=rental_dict)
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("Bad Request", status=status.HTTP_400_BAD_REQUEST)

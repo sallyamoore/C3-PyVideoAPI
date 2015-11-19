@@ -47,29 +47,10 @@ class Rental(models.Model):
     def rental_customer_id(self):
         return self.customer.id
 
-# Receivers below listen for pre_save events and execute additional model validations.
-# Model validations through field characteristics (e.g., PositiveSmallIntegerField
-# should not allow negatives) above are not activated at database level,
-# apparently due to a problem with how Django works with SQLite3.
-# These receiver decorators ensure that model validations take place.
-@receiver(pre_save, sender=Rental)
-def rental_decrements_movie_num_available_customer_account_credit(sender, **kwargs):
-    rental = kwargs.get("instance")
-    # print rental.pk
-    # print rental.checked_out
-    # if rental.pk and rental.checked_out == True: # updating
-    #     rental.checked_out = False
-    #     rental.save()
-    #     movie = Movie.objects.get(id=rental.movie.pk)
-    #     movie.num_available += 1
-    #     movie.full_clean()
-    #     movie.save()
+    def checkout(self):
+        movie = self.movie
+        customer = self.customer
 
-    if rental.checked_out == True:
-    # else:
-        movie = Movie.objects.get(id=rental.movie.pk)
-        customer = Customer.objects.get(id=rental.customer.pk)
-        # import pdb; pdb.set_trace()
         if movie.num_available > 0:
             movie.num_available -= 1
             movie.full_clean()
@@ -79,13 +60,23 @@ def rental_decrements_movie_num_available_customer_account_credit(sender, **kwar
         else:
             raise ValidationError("Number available cannot exceed inventory.")
 
-    elif rental.checked_out == False:
-        movie = Movie.objects.get(id=rental.movie.pk)
+    def checkin(self):
+        self.checked_out = False
+        self.save()
+        movie = self.movie
         movie.num_available += 1
         movie.full_clean()
         movie.save()
+        rental_dict = { 'pk': self.pk, 'checkout_date': self.checkout_date,
+        'return_date': self.return_date, 'movie': self.movie.pk,
+        'customer': self.customer.pk, 'checked_out': self.checked_out }
+        return rental_dict
 
-
+# Receivers below listen for pre_save events and execute additional model validations.
+# Model validations through field characteristics (e.g., PositiveSmallIntegerField
+# should not allow negatives) above are not activated at database level,
+# apparently due to a problem with how Django works with SQLite3.
+# These receiver decorators ensure that model validations take place.
 @receiver(pre_save, sender=Movie)
 def validate_num_available(sender, **kwargs):
     movie = kwargs.get("instance")
